@@ -1,0 +1,1 @@
+# cloning reddit to learn riverpod and applying mvc pattern in flutter
