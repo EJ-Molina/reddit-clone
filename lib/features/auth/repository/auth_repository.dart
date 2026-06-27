@@ -24,7 +24,7 @@ final authRepositoryProvider = Provider(
 class AuthRepository {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
-  GoogleSignIn _googleSignIn;
+  final GoogleSignIn _googleSignIn;
 
   AuthRepository({
     required this._firestore,
@@ -105,6 +105,10 @@ class AuthRepository {
         .map((e) => UserModel.fromMap(e.data() as Map<String, dynamic>));
   }
 
+  void logOut() async {
+    await _googleSignIn.signOut();
+    await _auth.signOut();
+  }
   // Future<void> signInWithGoogle() async {
   //   final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
   //   if (googleUser == null) return;

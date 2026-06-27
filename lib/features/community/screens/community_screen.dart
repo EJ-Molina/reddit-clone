@@ -4,6 +4,7 @@ import 'package:reddit_clone/core/common/error_screen.dart';
 import 'package:reddit_clone/core/common/loader.dart';
 import 'package:reddit_clone/features/auth/controllers/auth_controller.dart';
 import 'package:reddit_clone/features/community/controller/community_controller.dart';
+import 'package:reddit_clone/models/community.dart';
 import 'package:routemaster/routemaster.dart';
 
 class CommunityScreen extends ConsumerWidget {
@@ -64,7 +65,12 @@ class CommunityScreen extends ConsumerWidget {
                                     child: Text('Mod Tools'),
                                   )
                                 : OutlinedButton(
-                                    onPressed: () {},
+                                    onPressed: () => joinOrLeaveCommunity(
+                                      ref,
+                                      context,
+                                      community,
+                                      user.uid,
+                                    ),
                                     style: OutlinedButton.styleFrom(
                                       padding: .symmetric(horizontal: 25),
                                       shape: RoundedRectangleBorder(
@@ -96,6 +102,17 @@ class CommunityScreen extends ConsumerWidget {
             loading: () => const Loader(),
           ),
     );
+  }
+
+  void joinOrLeaveCommunity(
+    WidgetRef ref,
+    BuildContext context,
+    Community community,
+    String uid,
+  ) {
+    ref
+        .read(communityControllerProvider.notifier)
+        .joinOrLeaveCommunity(community, uid, context);
   }
 
   void navigateToModTools(BuildContext context) {

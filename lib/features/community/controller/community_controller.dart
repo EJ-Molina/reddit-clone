@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:reddit_clone/core/constants/constants.dart';
+import 'package:reddit_clone/core/failure.dart';
 import 'package:reddit_clone/core/providers/storage_repository_provider.dart';
 import 'package:reddit_clone/core/utils.dart';
 import 'package:reddit_clone/features/auth/controllers/auth_controller.dart';
@@ -28,8 +30,20 @@ final getUserCommunityByNameProvider = StreamProvider.autoDispose.family((
   ref,
   String name,
 ) {
-  final communityController = ref.watch(communityControllerProvider.notifier);
-  return communityController.getCommunityByName(name);
+  return ref
+      .watch(communityControllerProvider.notifier)
+      .getCommunityByName(name);
+});
+
+final searchCommunityProvider = StreamProvider.autoDispose.family((
+  ref,
+  String query,
+) {
+  return ref.watch(communityControllerProvider.notifier).searchCommunity(query);
+});
+
+final searchEjProvider = StreamProvider.family((ref, String query) {
+  return ref.watch(communityControllerProvider.notifier).searchEj(query);
 });
 
 class CommunityController extends StateNotifier<bool> {
@@ -111,5 +125,34 @@ class CommunityController extends StateNotifier<bool> {
       (l) => showSnackbar(context, l.message),
       (r) => Routemaster.of(context).pop(),
     );
+  }
+
+  Stream<List<Community>> searchCommunity(String query) {
+    return _communityRepository.searchCommunity(query);
+  }
+
+  void joinOrLeaveCommunity(
+    Community community,
+    String uid,
+    BuildContext context,
+  ) async {
+    Either<Failure, void> res;
+    if (community.members.contains(uid)) {
+      res = await _communityRepository.leaveCommunity(community.name, uid);
+    } else {
+      res = await _communityRepository.joinCommunity(community.name, uid);
+    }
+
+    res.fold((l) => showSnackbar(context, l.message), (r) {
+      if (community.members.contains(uid)) {
+        showSnackbar(context, 'Community left successfully!');
+      } else {
+        showSnackbar(context, 'Community left successfully!');
+      }
+    });
+  }
+
+  Stream<List<Community>> searchEj(String query) {
+    return _communityRepository.searchEj(query);
   }
 }

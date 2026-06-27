@@ -35,7 +35,7 @@ class CommunityRepository {
   }
 
   Stream<List<Community>> getUserCommunities(String uid) {
-    var result = _communities
+    return _communities
         .where('members', arrayContains: uid)
         .snapshots()
         .map((e) {
@@ -48,7 +48,6 @@ class CommunityRepository {
           }
           return communities;
         });
-    return result;
   }
 
   Stream<Community> getCommunityByName(String name) {
@@ -68,5 +67,82 @@ class CommunityRepository {
     } catch (e) {
       return left(Failure(e.toString()));
     }
+  }
+
+  Stream<List<Community>> searchCommunity(String query) {
+    final trimmedQuery = query.trim();
+
+    if (trimmedQuery.isEmpty) {
+      return _communities.where('name', isEqualTo: '').snapshots().map((event) {
+        final communities = <Community>[];
+        for (final doc in event.docs) {
+          communities.add(
+            Community.fromMap(doc.data() as Map<String, dynamic>),
+          );
+        }
+        return communities;
+      });
+    }
+
+    return _communities
+        .orderBy('name')
+        .startAt([trimmedQuery])
+        .endAt(['$trimmedQuery\uf8ff'])
+        .snapshots()
+        .map((event) {
+          final communities = <Community>[];
+          for (final doc in event.docs) {
+            communities.add(
+              Community.fromMap(doc.data() as Map<String, dynamic>),
+            );
+          }
+          return communities;
+        });
+  }
+
+  FutureVoid joinCommunity(String communityName, String uid) async {
+    try {
+      return right(
+        _communities.doc(communityName).update({
+          'members': FieldValue.arrayUnion([uid]),
+        }),
+      );
+    } on FirebaseException catch (ex) {
+      throw ex.toString();
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+   FutureVoid leaveCommunity(String communityName, String uid) async {
+    try {
+      return right(
+        _communities.doc(communityName).update({
+          'members': FieldValue.arrayRemove([uid]),
+        }),
+      );
+    } on FirebaseException catch (ex) {
+      throw ex.toString();
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
+
+
+  //experiment
+  Stream<List<Community>> searchEj(String query) {
+    return _communities
+        .where('name', isEqualTo: query.trim().toLowerCase())
+        .snapshots()
+        .map((data) {
+          List<Community> communities = [];
+          for (var community in data.docs) {
+            debugPrint(community['name']);
+            communities.add(
+              Community.fromMap(community.data() as Map<String, dynamic>),
+            );
+          }
+          return communities;
+        });
   }
 }
