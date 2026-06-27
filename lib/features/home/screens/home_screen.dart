@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_clone/core/constants/constants.dart';
 import 'package:reddit_clone/features/auth/controllers/auth_controller.dart';
 import 'package:reddit_clone/features/home/delegates/searchWidget.dart';
-import 'package:reddit_clone/features/home/delegates/search_community_delegate.dart';
 import 'package:reddit_clone/features/home/drawers/community_list_drawer.dart';
 import 'package:reddit_clone/features/home/drawers/profile_drawer.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int currentPage = 0;
+
+  @override
+  Widget build(BuildContext context) {
     var user = ref.watch(userProvider)!;
     return Scaffold(
       appBar: AppBar(
@@ -24,17 +31,6 @@ class HomeScreen extends ConsumerWidget {
           },
         ),
         actions: [
-          // Builder(
-          //   builder: (context) {
-          //     return IconButton(
-          //       onPressed: () => showSearch(
-          //         context: context,
-          //         delegate: SearchCommunityDelegate(ref),
-          //       ),
-          //       icon: Icon(Icons.search),
-          //     );
-          //   }
-          // ),
           IconButton(
             onPressed: () => Navigator.push(
               context,
@@ -57,6 +53,17 @@ class HomeScreen extends ConsumerWidget {
       ),
       drawer: const CommunityListDrawer(),
       endDrawer: const ProfileDrawer(),
+      bottomNavigationBar: NavigationBar(
+        destinations: [
+          NavigationDestination(icon: Icon(Icons.home), label: ''),
+          NavigationDestination(icon: Icon(Icons.add), label: ''),
+        ],
+        selectedIndex: currentPage,
+        onDestinationSelected: (value) => setState(() {
+          currentPage = value;
+        }),
+      ),
+      body: IndexedStack(index: currentPage, children: Constants.tabWidgets),
     );
   }
 

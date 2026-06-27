@@ -102,6 +102,7 @@ class CommunityScreen extends ConsumerWidget {
             loading: () => const Loader(),
           ),
     );
+ 
   }
 
   void joinOrLeaveCommunity(
@@ -118,4 +119,6 @@ class CommunityScreen extends ConsumerWidget {
   void navigateToModTools(BuildContext context) {
     Routemaster.of(context).push('/mod-tools/$name');
   }
+  
+   
 }

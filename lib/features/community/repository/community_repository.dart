@@ -35,19 +35,16 @@ class CommunityRepository {
   }
 
   Stream<List<Community>> getUserCommunities(String uid) {
-    return _communities
-        .where('members', arrayContains: uid)
-        .snapshots()
-        .map((e) {
-          List<Community> communities = [];
-          debugPrint(e.size.toString());
-          for (var doc in e.docs) {
-            communities.add(
-              Community.fromMap(doc.data() as Map<String, dynamic>),
-            );
-          }
-          return communities;
-        });
+    return _communities.where('members', arrayContains: uid).snapshots().map((
+      e,
+    ) {
+      List<Community> communities = [];
+      debugPrint(e.size.toString());
+      for (var doc in e.docs) {
+        communities.add(Community.fromMap(doc.data() as Map<String, dynamic>));
+      }
+      return communities;
+    });
   }
 
   Stream<Community> getCommunityByName(String name) {
@@ -114,7 +111,7 @@ class CommunityRepository {
     }
   }
 
-   FutureVoid leaveCommunity(String communityName, String uid) async {
+  FutureVoid leaveCommunity(String communityName, String uid) async {
     try {
       return right(
         _communities.doc(communityName).update({
@@ -128,6 +125,16 @@ class CommunityRepository {
     }
   }
 
+  FutureVoid addMod(String communityName, List<String> uids) async {
+    try {
+      return right(_communities.doc(communityName).update({'mods': uids}));
+      
+    } on FirebaseException catch (ex) {
+      throw ex.toString();
+    } catch (e) {
+      return left(Failure(e.toString()));
+    }
+  }
 
   //experiment
   Stream<List<Community>> searchEj(String query) {
