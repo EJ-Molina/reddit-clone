@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/features/feed/screens/feed_screen.dart';
-import 'package:reddit_clone/features/post/screens/post_screen.dart';
+import 'package:reddit_clone/features/post/screens/add_post_screen.dart';
 
 class Constants {
   static const logoPath = 'assets/images/logo.png';
@@ -13,7 +13,7 @@ class Constants {
       'https://external-preview.redd.it/5kh5OreeLd85QsqYO1Xz_4XSLYwZntfjqou-8fyBFoE.png?auto=webp&s=dbdabd04c399ce9c761ff899f5d38656d1de87c2';
 
   static List<Widget> tabWidgets = [
-    PostScreen(),
-    FeedScreen()
+    FeedScreen(),
+    AddPostScreen(),
   ];
 }
