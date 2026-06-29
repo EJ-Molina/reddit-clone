@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -39,9 +38,6 @@ class AuthRepository {
 
   FutureEither<UserModel> signInWithGoogle() async {
     try {
-      var authSub = _googleSignIn.authenticationEvents.listen((event) {
-        print('Auth Event: ${event.toString()}');
-      });
 
       await _googleSignIn.initialize(
         serverClientId:

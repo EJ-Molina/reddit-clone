@@ -70,6 +70,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '248755296662',
     projectId: 'reddit-clone-8e8c7',
     storageBucket: 'reddit-clone-8e8c7.firebasestorage.app',
+    androidClientId: '248755296662-3kh0qd5d4tdfq3l2s49j0c68l3btlhs1.apps.googleusercontent.com',
+    iosClientId: '248755296662-1mh1qc3hmg765l1h541ftoqvhf6mp88d.apps.googleusercontent.com',
     iosBundleId: 'com.example.redditClone',
   );
+
 }
